@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EL FIN DE MI MUNDO</title>
+    <style>
+        /* ==========================================================================
+           ESTILOS GENERALES
+           ========================================================================== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #000;
+            color: #fff;
+        }
+        .pantalla {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease-in-out, visibility 0.5s;
+            z-index: 10;
+        }
+        .oculto {
+            opacity: 0 !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+        }
+
+        /* ==========================================================================
+           PANTALLA 1: LOGIN (comienzo.jpg)
+           ========================================================================== */
+        #pantalla-login {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('fotos/foto3.jpg') no-repeat center center/cover;
+        }
+        .login-box {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            max-width: 400px;
+            width: 90%;
+        }
+        .login-box h2 {
+            margin-bottom: 20px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            font-size: 1.5rem;
+        }
+        .login-box input {
+            padding: 12px;
+            width: 100%;
+            border: none;
+            border-radius: 25px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 16px;
+            background: rgba(255,255,255,0.2);
+            color: #fff;
+            outline: none;
+        }
+        .login-box input::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            cursor: pointer;
+        }
+        .btn {
+            padding: 12px 30px;
+            border: 1px solid #fff;
+            background: transparent;
+            color: #fff;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            flex-shrink: 0; /* Evita que el botón se aplaste */
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        .btn:hover {
+            background: #fff;
+            color: #000;
+            box-shadow: 0 0 15px #fff;
+        }
+
+        /* ==========================================================================
+           PANTALLA 2: INTERMEDIA (SOLUCIONADO EL DESPLAZAMIENTO EN MÓVILES)
+           ========================================================================== */
+        #pantalla-frase {
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('fotos/planton.jpg') no-repeat center center/cover;
+            text-align: center;
+            flex-direction: column;
+            padding: 40px 20px;
+            overflow-y: auto; /* Permite deslizar si el texto no cabe */
+            justify-content: flex-start; /* Alinea arriba para poder hacer scroll natural */
+        }
+        #pantalla-frase h1 {
+            font-size: 1.6rem; /* Un poco más pequeño para que no sature tanto */
+            font-weight: 300;
+            margin-bottom: 25px;
+            max-width: 800px;
+            line-height: 1.6;
+            font-style: italic;
+            margin-top: 20px;
+        }
+        .frase-secundaria {
+            font-size: 1.1rem;
+            font-weight: 400;
+            line-height: 1.8;
+            letter-spacing: 1px;
+            max-width: 750px;
+            color: #ffffff;
+            text-align: justify; /* Hace que tu texto largo se vea más ordenado */
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(4px);
+        }
+
+        /* ==========================================================================
+           PANTALLA 3: GALERÍA FINAL Y TEXTO
+           ========================================================================== */
+        #pantalla-final {
+            background: #000;
+            display: flex;
+            flex-direction: row;
+        }
+        
+        .col-galaxia {
+            width: 60%;
+            height: 100%;
+            position: relative;
+            background: #000000;
+            display: flex;
+            justify-content: center; 
+            align-items: center;     
+            overflow: hidden;
+        }
+        
+        .col-texto {
+            width: 40%;
+            height: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            border-left: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 60px 40px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            z-index: 40;
+        }
+        .col-texto h2 {
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            font-weight: 300;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+            padding-bottom: 15px;
+            letter-spacing: 1px;
+            line-height: 1.4;
+        }
+        .col-texto p {
+            font-size: 1.1rem;
+            line-height: 1.9;
+            color: #e0e0e0;
+            white-space: pre-line;
+        }
+
+        /* ==========================================================================
+           ESTADOS DE LAS FOTOS
+           ========================================================================== */
+        .foto-unid {
+            position: absolute;
+            max-width: 85%;  
+            max-height: 85%; 
+            width: auto;
+            height: auto;
+            object-fit: contain; 
+            border-radius: 12px;
+            
+            opacity: 0;
+            visibility: hidden;
+            transform: translate(-50%, -50%) scale(0.95);
+            filter: blur(10px);
+            box-shadow: none;
+            
+            transition: opacity 0.8s ease-in-out, filter 0.8s ease-in-out, transform 0.8s ease-in-out, box-shadow 0.8s ease-in-out;
+        }
+
+        .foto-unid.activa {
+            opacity: 1;
+            visibility: visible;
+            filter: blur(0px) brightness(1) scale(1);
+            transform: translate(-50%, -50%) scale(1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            animation: destelloFlash 0.5s ease-out forwards;
+        }
+
+        @keyframes destelloFlash {
+            0% {
+                filter: blur(15px) brightness(3);
+                box-shadow: 0 0 50px 20px rgba(255, 255, 255, 0.7);
+            }
+            100% {
+                filter: blur(0px) brightness(1);
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            }
+        }
+
+        .foto-unid.efecto-polvo {
+            opacity: 0 !important;
+            visibility: visible !important;
+            transform: translate(-50%, -50%) scale(1.3) !important;
+            filter: blur(50px) brightness(2.5) contrast(0.3) !important;
+            box-shadow: 0 0 60px 30px rgba(255, 255, 255, 0) !important;
+            transition: opacity 1.5s cubic-bezier(0.1, 0.8, 0.25, 1), 
+                        filter 1.5s cubic-bezier(0.1, 0.8, 0.25, 1), 
+                        transform 1.5s cubic-bezier(0.1, 0.8, 0.25, 1), 
+                        box-shadow 1.5s cubic-bezier(0.1, 0.8, 0.25, 1) !important;
+        }
+
+        /* ==========================================================================
+           ADAPTACIÓN COMPLETA PARA CELULARES (RESPONSIVE)
+           ========================================================================== */
+        @media (max-width: 768px) {
+            #pantalla-frase h1 {
+                font-size: 1.2rem;
+            }
+            .frase-secundaria {
+                font-size: 0.95rem;
+                padding: 15px;
+            }
+            #pantalla-final {
+                flex-direction: column; /* Apila la galería arriba y el texto abajo */
+            }
+            .col-galaxia {
+                width: 100%;
+                height: 45%; /* Espacio para las fotos en cel */
+            }
+            .col-texto {
+                width: 100%;
+                height: 55%; /* Espacio para tu carta en cel */
+                padding: 30px 20px;
+                border-left: none;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            .col-texto h2 {
+                font-size: 1.2rem;
+            }
+            .col-texto p {
+                font-size: 0.95rem;
+            }
+            .foto-unid {
+                max-width: 90%;
+                max-height: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="miMusica" src="musica/Leo Dan - Te He Prometido (Official Audio)_144p-mc.mp3" loop></audio>
+
+    <div id="pantalla-login" class="pantalla">
+        <div class="login-box">
+            <h2>Nuestra Fecha Especial</h2>
+            <input type="date" id="fechaInput">
+            <br>
+            <button class="btn" onclick="verificarFecha()">Entrar</button>
+        </div>
+    </div>
+
+    <div id="pantalla-frase" class="pantalla oculto">
+        <h1>"El universo es demasiado grande, pero de alguna forma, coincidir contigo fue mi parte favorita de todo este viaje."</h1>
+        <p class="frase-secundaria">TE AMO.... SI CUMPLI MI PROMESA TE BUSQUE Y ESTA VEZ SI DESAPARECISTE BIEN BUENO ESPERO EL TIMEPO TE HAGA DAR CUENTA DE LO QUE NO PUDE DANIELA PERO NO OLVIDES QUE YO SI QUERIA UN FUTURO CONTIGO NO TODO TENIA QUE SER PERFECTO SINO REAL Y LO TENIAMOS TU SABES NO SE SI LO VERAS O TE LLEGARA, RECUERDAS TODO INICIO CON UN JUEVES ENTRENANDO JUNTOS Y AHORA MI DANI UN JUEVES TE DEJO SER LIBRE NUNCA OLVIDES QUE TE AMO SI? PERO AHORA TE DEJO SER FELIZ COMO LO QUISISTE ADIOS AMOR, APRIETA EL BOTON</p>
+        <button class="btn" onclick="irAlFinal()">Continuar</button>
+    </div>
+
+    <div id="pantalla-final" class="pantalla oculto">
+        <div class="col-galaxia" id="galaxia"></div>
+        
+        <div class="col-texto">
+            <h2>A ESTO ME REFERIA CUANADO TE DIJE SIENTO UN DIA TE CANSARAS DE MI Y SE HIZO REALIDAD MI MIEDO. ESTE ES UN MENSAJE QUE APENAS TE HICE LLEGAR Y NO FUE SATISFACTORIO AQUI TE DIJE TODA LA VERDAD CALLE MUCHAS VECES POR QUE NO QUERIA PELEAR PERO CREO ERA NECESARIO PARA NO CAER AQUI Y SALIR ADELANTE JUNTOS AMOR, ACLARO QUE NO TE ESTOY ATACANDO EN NADA NO LO VEAS ASI NUNCA FUE ASI AMOR SOLO QUERIA QUE AMBOS NOS ENTENDIERAMOS Y MEJOREMOS AMBOS, NO ME ESTOY RINDIENDO SOLO TE DEJARE SER FELIZ AUN ASI ME DUELA NUNCA OLVIDES ENSERIO QUE SI ERA REAL SOLO FALTABA  ENTENDERNOS MEJOR Y SEGUIR ADELANTE ESO ES EL AMOR Y ERA LOQUE TENEMOS SOLO TE CANSASTE DE MI ESPERO QUE AHORA SI PUEDAS ENTENDERME AHORA QUE TE EXPLICO TODO QUE SEAS FELIZ ENSERIO NUNCA TE OLVIDARE LO QUERIA TODO CONTIGO </h2>
+            <p>
+                Perdón por esto si estoy haciendo lo que claramente que pediste que no hiciera, ni yo sé cómo ahora puedo hacer esto modifique muchas cosas para encontrarte por aquí solo por hablarte estaba entre esto y si no funcionaba una última cosa que pueda hacer aparte de esta me queda una última cosa más para intentar encontrarte porque enserio sabes desaparecer 
+
+Ya me dijiste que extrañas la vida con tus exs parejas y varias veces me dijiste que lo nuestro no es ni un poco de lo que tenías.
+
+Pero si hay algo que tengo que ellos no. Yo no me rindo con la mujer que amo y aquí viene lo que me dijiste que si te amo te deje .. pero yo no lo veo así, enserio porque rendirse con alguien que amas eso es algo que nunca lograre entender si amas a esa persona siempre buscas hasta la mínima oportunidad de recuperarla antes que el tiempo haga más lo suyo y perderla para siempre.
+
+Te voy a decir cosas que nunca te dije o en la forma en la que te diré pero antes entiende algo (las veces que quise expresarme decirte que es lo que quiero nunca fue por pelar y molestarte yo creo que una relación debe ser madura y con poder decir lo que quieres y no callarte por evitar más enojos)
+ yo si cometí errores soy conciente de eso, recuerdo incluso que te explique porque la primera cita te dije porque en la catedral y no fue por mi fue por ti fue algo que se me olvidó que estabas en la farmacia y preferí mil veces estar cerca de tu casa porque creí estabas ahí 
+
+Mira es a esto a lo que me refiero con eso te pedí perdón te pedí un nuevo punto de inicio el cual me lo dtise pero a un mínimo error de mi parte seguías arrastrando problemas de nuestro pasado  y hasta ahora, incluso te dije necesito que soltemos eso y nos basemos en lo que tenemos  ahora  se que no es tan fácil pero no te dije lo harás tu sola.
+
+Enserio yo no te pedía poner en nuestras redes en una relación... Solo quería estar ahí como cuando éramos amigos osea nunca pero si las primeras veces de nuestra relación, me bloqueaste de todo lugar incluso cuando estamos bien y me decías que no puedes hacer tus cosas si yo estoy ahí y enserio ahí yo me refiero a madurez por qué enserio una relación debe ser así? Y más cuando me dijiste que el Bruno te mandaba mensajes diciéndote que bonitos ojos tienes y me pregunte ese día porque a mí que soy su novio me tiene bloqueado de todo lado y a personas que quieren tenerla no..
+Yo nunca te dije no quiero que tengas amigos simplemente te pedí poner límites y enserio creo que te importa más a como te ve la gente a como te sientes el querer relacionar nuestra relación a otras relaciones y aquí también te pido perdón por no ser como tus ex parejas y que siempre me comparaste con ellos no es la primera vez que me dijiste que para ti ellos son oro 
+
+Tu sabes que siempre quise hacer cosas detalles por ti  y que siempre que los hice siempre me dijiste de todo y la verdad eso también me desanimo un poco a qué más puedo hacer que le guste deje de hacer algunas cosas fue por eso 
+
+Deje de hacer cartas porque en su momento tú me decías que era lo mejor y cuando ocurría algo me decías que no me esfuerzo en nada y no tienes que tener dinero para demostrarlo y entonces entendí que eso era como tu me decías lo mínimo que podía hacer
+
+Amor incluso sobre tus cumpleaños creo antes la pasabas sola y no te gusta sabes ese día fue con intenciones de alegrarte no entiendo el porque me decías no quiero verte en mis cumpleaños pelearemos soy insoportable ese día, se que esta mal pero te diré que paso por mi cabeza para hacerte sentir importante y aquí te darás cuenta que si estaba cambiado por ti .. recuerdas era un jueves en la noche yo te dije amor mañana un momento pasaré por tu casa a la 1 y me volveré a ir a la uni  no tenía tanto dinero para darte algo que como tu me diste y te dire la razón del porque no tengo (sabes que si me ahorro hasta esas veces te dije que me iba a pie por ahorrar uno para el gym pero sabes que más mi hermano su favorito de mi ma siempre le pide dinero para esto y para libros para traje ropa y demás  y ns mi ma le da sus gustos y yo si tenía ahorrado una buena cantidad y como todo bajo paso compraron la casa de a lado y paso lo de mi papá gasto más osea no te diré que no hay dinero pero es casi justo para comida comprar materia prima para el negocio de mi familia) muchas veces se hizo faltar mi ma para comprar la carne y le fui prestando osea siempre me lo devuelve pero ahora con estas cosas más está un poco mal y justamente hay algo que paso problemas también fuertes y mi mamá también está un poco mal triste de eso y se que me devolverá pero no le exigo porque se cómo está con todo lo de mi papá llora y esos problemas más .
+
+Para tus cumpleaños quise comprarte desayuno y que desayunes eso no se pudo entonces cambie el plan y dije le daré esto  e incluso te dije amor y si mejor salimos hoy? Y me dijiste no, quiero ir al gym me falte y te dije está bien entonces dije le daré al llevarle a su casa  y paso que te hiciste ganar con el tiempo, queria que me apoyes sabes tu ya eres profesional y yo estoy casi cerca de solo egresar pense que me entenderias tu ya pasaste por todo esto pense serias feliz al ver que estoy haciendo todo o posible por egresar y al parecer no es asi solo me botaste de tu vida, no olvidocuando dijiste me querias presentar a tus papas y te diste cuenta del tipo que soy y no lo valgo.... y que quieres que dios te ponga como a tus ex en tu vida  para ti ellos  si lo valian, sabes no me arrepiento de ti yo pienso muy diferente te lo resumo todo con una palabra bueno dos TE AMO LO QUERIA TODO CONTIGO adios mi Dani espero cuando me veas ya no te afecte y sigas normal espero leas todo "01/03/26 nunca lo olvidare"
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const FECHA_CORRECTA = "2026-03-01"; 
+
+        const misFotos = [
+            'fotos/foto1.jpg', 'fotos/foto2.jpg', 'fotos/foto3.jpg',
+            'fotos/foto4.jpg', 'fotos/foto5.jpg', 'fotos/foto6.jpg',
+            'fotos/foto7.jpg', 'fotos/foto8.jpg', 'fotos/foto9.jpg',
+            'fotos/foto10.jpg', 'fotos/juntos.jpg', 'fotos/comienzo.jpg',
+            'fotos/planton.jpg'
+        ];
+
+        const elementoMusica = document.getElementById('miMusica');
+        let listaElementosImg = [];
+        let indiceActual = 0; 
+
+        function verificarFecha() {
+            const fechaIngresada = document.getElementById('fechaInput').value;
+            if (!fechaIngresada) {
+                alert("Por favor, introduce nuestra fecha especial. ❤️");
+                return;
+            }
+            if (fechaIngresada === FECHA_CORRECTA) {
+                elementoMusica.play().catch(e => console.log("Audio esperando interacción"));
+                document.getElementById('pantalla-login').classList.add('oculto');
+                document.getElementById('pantalla-frase').classList.remove('oculto');
+            } else {
+                alert("YA OLVIDASTE NUESTRA FECHA?????!!");
+            }
+        }
+
+        function irAlFinal() {
+            elementoMusica.play().catch(() => {});
+            document.getElementById('pantalla-frase').classList.add('oculto');
+            document.getElementById('pantalla-final').classList.remove('oculto');
+            inicializarFotos();
+            iniciarGaleriaFluida();
+        }
+
+        function inicializarFotos() {
+            const galaxia = document.getElementById('galaxia');
+            galaxia.innerHTML = ""; 
+            listaElementosImg = [];
+            
+            misFotos.forEach((rutaFoto) => {
+                const img = document.createElement('img');
+                img.src = rutaFoto;
+                img.classList.add('foto-unid');
+                img.style.top = "50%";
+                img.style.left = "50%";
+                img.style.transform = "translate(-50%, -50%)";
+                galaxia.appendChild(img);
+                listaElementosImg.push(img);
+            });
+        }
+
+        function iniciarGaleriaFluida() {
+            if (listaElementosImg.length === 0) return;
+
+            function cicloTransicion() {
+                const fotoPrevia = document.querySelector('.foto-unid.activa');
+                if (fotoPrevia) {
+                    fotoPrevia.classList.add('efecto-polvo');
+                    setTimeout(() => {
+                        fotoPrevia.classList.remove('activa', 'efecto-polvo');
+                        mostrarSiguiente();
+                    }, 1500); 
+                } else {
+                    mostrarSiguiente();
+                }
+            }
+
+            function mostrarSiguiente() {
+                const fotoNueva = listaElementosImg[indiceActual];
+                fotoNueva.classList.add('activa');
+                indiceActual = (indiceActual + 1) % listaElementosImg.length;
+                setTimeout(cicloTransicion, 3000);
+            }
+
+            mostrarSiguiente();
+        }
+    </script>
+</body>
+</html>
